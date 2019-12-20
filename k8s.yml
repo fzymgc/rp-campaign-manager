@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "rp-campaign-manager"
+spec:
+  selector:
+    matchLabels:
+      app: "rp-campaign-manager"
+  template:
+    metadata:
+      labels:
+        app: "rp-campaign-manager"
+    spec:
+      containers:
+        - name: "rp-campaign-manager"
+          image: "gcr.io/rp-campaign-manager/jib-image"
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "rp-campaign-manager"
+spec:
+  selector:
+    app: "rp-campaign-manager"
+  type: LoadBalancer
+  ports:
+    - protocol: "TCP"
+      port: 8080

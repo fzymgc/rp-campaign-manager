@@ -1,0 +1,5 @@
+micronaut:
+  application:
+        name: RP Campaign Manager
+  config-client:
+    enabled: true

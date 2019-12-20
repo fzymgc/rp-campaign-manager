@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: rp.campaign.manager
+---
+testFramework: kotlintest
+sourceLanguage: kotlin
