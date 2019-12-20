@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.cloud.tools.jib.gradle.JibExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.time.OffsetDateTime
 
 plugins {
   kotlin("jvm")
@@ -11,6 +12,7 @@ plugins {
   id("application")
   id("maven-publish")
   id("nebula.release")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 //version = gitVersion()
@@ -50,6 +52,10 @@ dependencies {
   implementation("io.swagger.core.v3:swagger-annotations")
   implementation("io.micronaut.graphql:micronaut-graphql")
   implementation("io.micronaut:micronaut-http-server-netty")
+  implementation("io.projectreactor:reactor-core")
+  implementation(
+    "io.projectreactor.kotlin:reactor-kotlin-extensions:1.0.1.RELEASE"
+  )
   kapt(platform("io.micronaut:micronaut-bom:$micronautVersion"))
   kapt("io.micronaut:micronaut-inject-java")
   kapt("io.micronaut:micronaut-validation")
@@ -64,13 +70,39 @@ dependencies {
   testImplementation(kotlin("test"))
   testImplementation(kotlin("test-junit"))
   testImplementation("io.mockk:mockk:1.9.3")
+  testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.20")
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.3.2")
   testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.0.1")
 }
 
 configure<JibExtension> {
+  from {
+    image = "azul/zulu-openjdk-alpine:11"
+  }
   to {
-    image = "gcr.io/rp-campaign-manager/jib-image"
+    image =
+      "docker.pkg.github.com/fzymgc/package-repository/rp-campaign-manager"
+//    tags = setOf(
+//      "${project.version}".replace(Regex("""[\+]"""),"_")
+//    )
+
+    auth {
+      username = project.findProperty("gpr.user") as String? ?: System.getenv(
+        "GPR_USERNAME"
+      )
+      password =
+        project.findProperty("gpr.password") as String? ?: System.getenv(
+          "GPR_PASSWORD"
+        )
+    }
+  }
+  container {
+    jvmFlags = "-Dcom.sun.management.jmxremote -noverify".split(" ")
+    labels = mapOf(
+      "dev.fzymgc.version" to "${project.version}",
+      "dev.fzymgc.application" to "rp-campaign-manager",
+      "dev.fzymgc.created-at" to "${OffsetDateTime.now()}"
+    )
   }
 }
 
@@ -119,14 +151,23 @@ publishing {
       name = "GitHubPackages"
       url = uri("https://maven.pkg.github.com/fzymgc/package-repository")
       credentials {
-        username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USERNAME")
-        password = project.findProperty("gpr.password") as String? ?: System.getenv("GPR_PASSWORD")
+        username = project.findProperty("gpr.user") as String? ?: System.getenv(
+          "GPR_USERNAME"
+        )
+        password =
+          project.findProperty("gpr.password") as String? ?: System.getenv(
+            "GPR_PASSWORD"
+          )
       }
     }
   }
-  publications {
-    create<MavenPublication>("gpr") {
-      from(components["java"])
+    publications {
+        create<MavenPublication>("gpr") {
+            from(components["java"])
+        }
     }
-  }
+}
+
+detekt {
+    config = files("${rootProject.rootDir}/detekt-config.yml")
 }

@@ -1,5 +1,5 @@
 profile: service
-defaultPackage: rp.campaign.manager
+defaultPackage: dev.fzymgc.rpcampaignmanager
 ---
 testFramework: kotlintest
 sourceLanguage: kotlin
