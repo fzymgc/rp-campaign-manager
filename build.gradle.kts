@@ -10,11 +10,10 @@ plugins {
   id("com.github.johnrengelman.shadow")
   id("application")
   id("maven-publish")
-  id("com.palantir.git-version")
+  id("nebula.release")
 }
 
-val gitVersion: groovy.lang.Closure<Any?> by extra
-version = gitVersion()
+//version = gitVersion()
 group = "dev.fzymgc.rpcampaignmanager"
 
 java {
