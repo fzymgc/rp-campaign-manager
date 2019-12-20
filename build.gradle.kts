@@ -69,8 +69,21 @@ dependencies {
 }
 
 configure<JibExtension> {
+  from {
+    image = "azul/zulu-openjdk-alpine:11"
+  }
   to {
-    image = "gcr.io/rp-campaign-manager/jib-image"
+    image = "docker.pkg.github.com/fzymgc/package-repository/rp-campaign-manager"
+    tags = setOf(
+      "${project.version}".replace(Regex("""[\+]"""),"_")
+    )
+    auth {
+      username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USERNAME")
+      password = project.findProperty("gpr.password") as String? ?: System.getenv("GPR_PASSWORD")
+    }
+  }
+  container {
+    jvmFlags = "-Dcom.sun.management.jmxremote -noverify".split(" ")
   }
 }
 
