@@ -12,6 +12,7 @@ plugins {
   id("application")
   id("maven-publish")
   id("nebula.release")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 //version = gitVersion()
@@ -160,9 +161,13 @@ publishing {
       }
     }
   }
-  publications {
-    create<MavenPublication>("gpr") {
-      from(components["java"])
+    publications {
+        create<MavenPublication>("gpr") {
+            from(components["java"])
+        }
     }
-  }
+}
+
+detekt {
+    config = files("${rootProject.rootDir}/detekt-config.yml")
 }

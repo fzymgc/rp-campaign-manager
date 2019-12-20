@@ -23,4 +23,6 @@ jobs:
     - name: Publish Docker Image
       env:
         GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.parallel=true
+        GPR_USERNAME: fzymgc
+        GPR_PASSWORD: ${{GITHUB_TOKEN}}
       run: ./gradlew jib
