@@ -9,9 +9,12 @@ plugins {
   id("com.google.cloud.tools.jib")
   id("com.github.johnrengelman.shadow")
   id("application")
+  id("maven-publish")
+  id("com.palantir.git-version")
 }
 
-version = "0.1"
+val gitVersion: groovy.lang.Closure<Any?> by extra
+version = gitVersion()
 group = "dev.fzymgc.rpcampaignmanager"
 
 java {
@@ -109,4 +112,22 @@ val run by tasks.getting(JavaExec::class) {
   jvmArgs(
     "-noverify", "-XX:TieredStopAtLevel=1", "-Dcom.sun.management.jmxremote"
   )
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "GitHubPackages"
+      url = uri("https://maven.pkg.github.com/fzymgc/package-repository")
+      credentials {
+        username = project.findProperty("gpr.user") as String? ?: System.getenv("GPR_USERNAME")
+        password = project.findProperty("gpr.password") as String? ?: System.getenv("GPR_PASSWORD")
+      }
+    }
+  }
+  publications {
+    create<MavenPublication>("gpr") {
+      from(components["java"])
+    }
+  }
 }
