@@ -1,5 +1,6 @@
 package dev.fzymgc.rpcampaignmanager
 
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.HttpStatus
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
@@ -12,7 +13,7 @@ import reactor.core.publisher.Mono
 class HomeController {
 
     @Get("/")
-    fun index(): Mono<HttpStatus> {
-        return Mono.just(HttpStatus.OK)
+    fun index(): Mono<HttpResponse<String>> {
+        return Mono.just(HttpResponse.created("You got here!").status(HttpStatus.OK))
     }
 }

@@ -1,0 +1,14 @@
+apiVersion: skaffold/v1
+kind: Config
+metadata:
+  name: rp-campaign-manager
+build:
+  artifacts:
+  - image: docker.pkg.github.com/fzymgc/package-repository/rp-campaign-manager
+    jib: {}
+deploy:
+  kubectl:
+    manifests:
+    - k8s/base.yml
+    - k8s/mongodb.yml
+    - k8s/k8s.yml

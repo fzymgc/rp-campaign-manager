@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rp-campaign-manager
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: service-discoverer
+  namespace: rp-campaign-manager
+rules:
+- apiGroups: [""]
+  resources: ["services", "endpoints", "configmaps", "secrets", "pods"]
+  verbs: ["get", "watch", "list"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: default-service-discoverer
+  namespace: rp-campaign-manager
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: rp-campaign-manager
+roleRef:
+  kind: Role
+  name: service-discoverer
+  apiGroup: rbac.authorization.k8s.io
