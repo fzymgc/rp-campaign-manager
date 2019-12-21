@@ -40,7 +40,7 @@ dependencies {
   implementation("io.micronaut:micronaut-runtime")
   implementation("io.micronaut.configuration:micronaut-micrometer-core")
   implementation("io.micronaut:micronaut-security-jwt")
-  implementation("io.micronaut.configuration:micronaut-elasticsearch")
+//  implementation("io.micronaut.configuration:micronaut-elasticsearch")
   implementation(
     "io.micronaut.kubernetes:micronaut-kubernetes-discovery-client"
   )
