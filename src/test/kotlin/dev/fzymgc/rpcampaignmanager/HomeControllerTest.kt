@@ -25,5 +25,6 @@ class HomeControllerTest(ctx: ApplicationContext) : StringSpec({
 
         // "the response is succesful"
         response.status shouldBe HttpStatus.OK
+        response.body() shouldBe "You got here!"
     }
 })
