@@ -24,6 +24,14 @@ micronaut:
           secret:
             generator:
               secret: "${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"
+    intercept-url-map:
+    - pattern: /*
+      http-method: GET
+      access:
+      - isAnonymous()
+    - pattern: /static/**
+      access:
+      - isAnonymous()
 
 ---
 micronaut:
